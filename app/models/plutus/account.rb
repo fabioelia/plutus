@@ -36,6 +36,7 @@ module Plutus
     has_many :debit_amounts
     has_many :credit_transactions, :through => :credit_amounts, :source => :transaction
     has_many :debit_transactions, :through => :debit_amounts, :source => :transaction
+    belongs_to :accountable, :polymorphic => true
 
     validates_presence_of :type, :name
     validates_uniqueness_of :name
