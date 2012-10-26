@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(:version => 20120514173712) do
 
   create_table "plutus_transactions", :force => true do |t|
     t.string   "description"
+    t.datetime "date"
     t.integer  "commercial_document_id"
     t.string   "commercial_document_type"
     t.datetime "created_at"

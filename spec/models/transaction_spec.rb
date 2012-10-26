@@ -79,5 +79,20 @@ module Plutus
       saved_transaction.commercial_document.should == mock_document
     end
 
+    it "should allow building a transaction with date" do
+      FactoryGirl.create(:asset, :name => "Accounts Receivable")
+      FactoryGirl.create(:liability, :name =>  "Sales Tax Payable")
+      datetime = Time.now
+      transaction = Transaction.build(
+        description: "Sold some widgets",
+        date: datetime,
+        debits: [
+          {account: "Accounts Receivable", amount: 50}],
+        credits: [
+          {account: "Sales Tax Payable", amount: 50}])
+      transaction.should be_valid
+      transaction.save
+      transaction.date.should be_true
+    end
   end
 end

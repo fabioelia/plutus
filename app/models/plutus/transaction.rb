@@ -22,7 +22,7 @@ module Plutus
   #
   # @author Michael Bulat
   class Transaction < ActiveRecord::Base
-    attr_accessible :description, :commercial_document
+    attr_accessible :description, :commercial_document, :date
 
     belongs_to :commercial_document, :polymorphic => true
     has_many :credit_amounts
@@ -41,6 +41,7 @@ module Plutus
     # @example
     #   transaction = Plutus::Transaction.build(
     #     description: "Sold some widgets",
+    #     date: 2012-01-01 00:00,
     #     debits: [
     #       {account: "Accounts Receivable", amount: 50}], 
     #     credits: [
@@ -49,7 +50,7 @@ module Plutus
     #
     # @return [Plutus::Transaction] A Transaction with built credit and debit objects ready for saving
     def self.build(hash)
-      transaction = Transaction.new(:description => hash[:description], :commercial_document => hash[:commercial_document])
+      transaction = Transaction.new(:description => hash[:description], :date => hash[:date], :commercial_document => hash[:commercial_document])
       hash[:debits].each do |debit|
         a = Account.find_by_name(debit[:account])
         transaction.debit_amounts << DebitAmount.new(:account => a, :amount => debit[:amount], :transaction => transaction)
