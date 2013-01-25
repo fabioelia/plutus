@@ -62,10 +62,12 @@ module Plutus
     # @example
     #   >> Plutus::Liability.balance
     #   => #<BigDecimal:1030fcc98,'0.82875E5',8(20)>
-    def self.balance
+    def self.balance( startDate = nil, endDate = nil )
       accounts_balance = BigDecimal.new('0')
       accounts = self.find(:all)
       accounts.each do |liability|
+	liability.startDate = startDate if startDate
+	liability.endDate   = endDate   if endDate
         unless liability.contra
           accounts_balance += liability.balance
         else

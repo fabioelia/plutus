@@ -68,10 +68,12 @@ module Plutus
     #   => #<BigDecimal:1030fcc98,'0.82875E5',8(20)>
     #
     # @return [BigDecimal] The decimal value balance
-    def self.balance
+    def self.balance( startDate = nil, endDate = nil )
       accounts_balance = BigDecimal.new('0')
       accounts = self.find(:all)
       accounts.each do |equity|
+	equity.start_date = startDate if startDate
+	equity.end_date   = endDate   if endDate
         unless equity.contra
           accounts_balance += equity.balance
         else
