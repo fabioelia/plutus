@@ -33,8 +33,8 @@ module Plutus
     attr_accessible :name, :contra
     attr_accessor  :start_date, :end_date
 
-    has_many :credit_amounts, :include => :transaction, :conditions => proc { "plutus_transactions.date >= '#{start_date || "1900-01-01"}' AND plutus_transactions.date <= #{end_date || ( Date.today + 15.days ).to_s}" }
-    has_many :debit_amounts,  :include => :transaction, :conditions => proc { "plutus_transactions.date >= '#{start_date || "1900-01-01"}' AND plutus_transactions.date <= #{end_date || ( Date.today + 15.days ).to_s}"    
+    has_many :credit_amounts, :include => :transaction, :conditions => proc { "plutus_transactions.date >= '#{start_date || "1900-01-01"}' AND DATE( plutus_transactions.date) <= #{end_date || ( Date.today + 15.days ).to_s}" }
+    has_many :debit_amounts,  :include => :transaction, :conditions => proc { "plutus_transactions.date >= '#{start_date || "1900-01-01"}' AND DATE( plutus_transactions.date ) <= #{end_date || ( Date.today + 15.days ).to_s}" }
     has_many :credit_transactions, :through => :credit_amounts, :source => :transaction
     has_many :debit_transactions, :through => :debit_amounts, :source => :transaction
     belongs_to :accountable, :polymorphic => true
