@@ -31,16 +31,23 @@ module Plutus
   # @author Michael Bulat
   class Account < ActiveRecord::Base
     attr_accessible :name, :contra
-    attr_accessor  :start_date, :end_date
 
-    has_many :credit_amounts, :include => :transaction, :conditions => proc { "plutus_transactions.date >= '#{start_date || "1900-01-01"}' AND DATE( plutus_transactions.date) <= '#{end_date || ( Date.today + 15.days ).to_s}'" }
-    has_many :debit_amounts,  :include => :transaction, :conditions => proc { "plutus_transactions.date >= '#{start_date || "1900-01-01"}' AND DATE( plutus_transactions.date ) <= '#{end_date || ( Date.today + 15.days ).to_s}'" }
+    has_many :credit_amounts
+    has_many :debit_amounts
     has_many :credit_transactions, :through => :credit_amounts, :source => :transaction
     has_many :debit_transactions, :through => :debit_amounts, :source => :transaction
     belongs_to :accountable, :polymorphic => true
 
     validates_presence_of :type, :name
     validates_uniqueness_of :name
+
+    def credits_by_date(start_date = "1900-01-01", end_date = Date.today + 15.days)
+      self.credit_amounts.includes(:transaction).where("plutus_transactions.date >= '#{start_date}' AND DATE( plutus_transactions.date) <= '#{end_date.to_s}'")
+    end
+
+    def debits_by_date(start_date = "1900-01-01", end_date = Date.today + 15.days)
+      self.debit_amounts.includes(:transaction).where("plutus_transactions.date >= '#{start_date}' AND DATE( plutus_transactions.date ) <= '#{end_date.to_s}'")
+    end
 
     # The trial balance of all accounts in the system. This should always equal zero,
     # otherwise there is an error in the system.
