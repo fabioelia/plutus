@@ -59,6 +59,7 @@ module Plutus
         a = Account.find_by_name(credit[:account])
         transaction.credit_amounts << CreditAmount.new(:account => a, :amount => credit[:amount], :transaction => transaction)
       end
+      transaction.date = Date.today if transaction.date.nil?
       transaction
     end
 
