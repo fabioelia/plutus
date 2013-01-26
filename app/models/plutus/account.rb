@@ -42,10 +42,14 @@ module Plutus
     validates_uniqueness_of :name
 
     def credits_by_date(start_date = "1900-01-01", end_date = Date.today + 15.days)
+      end_date = Date.today + 15.days if end_date.nil?
+      start_date = "1900-01-01" if start_date.nil?
       credit_amounts.includes(:transaction).where("plutus_transactions.date >= '#{start_date}' AND DATE( plutus_transactions.date) <= '#{end_date.to_s}'")
     end
 
     def debits_by_date(start_date = "1900-01-01", end_date = Date.today + 15.days)
+      end_date = Date.today + 15.days if end_date.nil?
+      start_date = "1900-01-01" if start_date.nil?
       debit_amounts.includes(:transaction).where("plutus_transactions.date >= '#{start_date}' AND DATE( plutus_transactions.date ) <= '#{end_date.to_s}'")
     end
 
