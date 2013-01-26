@@ -3,3 +3,4 @@ spec/debug.log
 .DS_Store
 .yardoc/
 pkg/
+*~

@@ -16,10 +16,16 @@ module Plutus
     #   => #<BigDecimal:103259bb8,'0.3E4',4(12)>
     #
     # @return [BigDecimal] The decimal value credit balance
-    def credits_balance
+    def credits_balance( start_date = nil, end_date = nil )
       credits_balance = BigDecimal.new('0')
-      credit_amounts.each do |credit_amount|
-        credits_balance = credits_balance + credit_amount.amount
+      if start_date || end_date
+        credits_by_date( start_date, end_date ).each do |credit_amount|
+          credits_balance = credits_balance + credit_amount.amount
+        end
+      else
+        credit_amounts.each do |credit_amount|
+          credits_balance = credits_balance + credit_amount.amount
+        end
       end
       return credits_balance
     end
@@ -31,10 +37,16 @@ module Plutus
     #   => #<BigDecimal:103259bb8,'0.1E4',4(12)>
     #
     # @return [BigDecimal] The decimal value credit balance
-    def debits_balance
+    def debits_balance( start_date = nil, end_date = nil )
       debits_balance = BigDecimal.new('0')
-      debit_amounts.each do |debit_amount|
-        debits_balance = debits_balance + debit_amount.amount
+      if start_date || end_date
+        debits_by_date( start_date, end_date ).each do |debit_amount|
+          debits_balance = debits_balance + debit_amount.amount
+        end
+      else
+        debit_amounts.each do |debit_amount|
+          debits_balance = debits_balance + debit_amount.amount
+        end
       end
       return debits_balance
     end
@@ -49,11 +61,15 @@ module Plutus
     #   => #<BigDecimal:103259bb8,'0.2E4',4(12)>
     #
     # @return [BigDecimal] The decimal value balance
-    def balance
+    def balance( start_date = nil, end_date = nil )
       unless contra
-        credits_balance - debits_balance
+        (start_date.nil? && end_date.nil?) ?              
+          credits_balance - debits_balance :
+          credits_balance - debits_balance( start_date, end_date )
       else
-        debits_balance - credits_balance
+        (start_date.nil? && end_date.nil?) ?              
+          debits_balance - credits_balance :
+          debits_balance - credits_balance( start_date, end_date )
       end
     end
 
@@ -62,16 +78,18 @@ module Plutus
     # @example
     #   >> Plutus::Liability.balance
     #   => #<BigDecimal:1030fcc98,'0.82875E5',8(20)>
-    def self.balance( startDate = nil, endDate = nil )
+    def self.balance( start_date = nil, end_date = nil )
       accounts_balance = BigDecimal.new('0')
       accounts = self.find(:all)
       accounts.each do |liability|
-	liability.startDate = startDate if startDate
-	liability.endDate   = endDate   if endDate
         unless liability.contra
-          accounts_balance += liability.balance
+          (start_date.nil? && end_date.nil?) ?          
+            accounts_balance += liability.balance :
+            accounts_balance += liability.balance( start_date, end_date 
         else
-          accounts_balance -= liability.balance
+          (start_date.nil? && end_date.nil?) ?          
+            accounts_balance -= liability.balance :
+            accounts_balance -= liability.balance( start_date, end_date )
         end
       end
       accounts_balance
