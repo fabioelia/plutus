@@ -25,8 +25,8 @@ module Plutus
     attr_accessible :description, :commercial_document, :date
 
     belongs_to :commercial_document, :polymorphic => true
-    has_many :credit_amounts
-    has_many :debit_amounts
+    has_many :credit_amounts, :dependent => :destroy
+    has_many :debit_amounts, :dependent => :destroy
     has_many :credit_accounts, :through => :credit_amounts, :source => :account
     has_many :debit_accounts, :through => :debit_amounts, :source => :account
 
