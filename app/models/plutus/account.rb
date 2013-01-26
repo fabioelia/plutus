@@ -42,11 +42,11 @@ module Plutus
     validates_uniqueness_of :name
 
     def credits_by_date(start_date = "1900-01-01", end_date = Date.today + 15.days)
-      self.credit_amounts.includes(:transaction).where("plutus_transactions.date >= '#{start_date}' AND DATE( plutus_transactions.date) <= '#{end_date.to_s}'")
+      credit_amounts.includes(:transaction).where("plutus_transactions.date >= '#{start_date}' AND DATE( plutus_transactions.date) <= '#{end_date.to_s}'")
     end
 
     def debits_by_date(start_date = "1900-01-01", end_date = Date.today + 15.days)
-      self.debit_amounts.includes(:transaction).where("plutus_transactions.date >= '#{start_date}' AND DATE( plutus_transactions.date ) <= '#{end_date.to_s}'")
+      debit_amounts.includes(:transaction).where("plutus_transactions.date >= '#{start_date}' AND DATE( plutus_transactions.date ) <= '#{end_date.to_s}'")
     end
 
     # The trial balance of all accounts in the system. This should always equal zero,
@@ -58,7 +58,7 @@ module Plutus
     #
     # @return [BigDecimal] The decimal value balance of all accounts
     def self.trial_balance(startDate = nil, endDate = nil)
-      unless self.new.class == Account
+      if self.new.class != Account
         raise(NoMethodError, "undefined method 'trial_balance'")
       elsif startDate || endDate
         Asset.balance( startDate, endDate ) - (Liability.balance( startDate, endDate ) + Equity.balance( startDate, endDate ) + Revenue.balance( startDate, endDate ) - Expense.balance( startDate, endDate ))
