@@ -85,7 +85,7 @@ module Plutus
         unless liability.contra
           (start_date.nil? && end_date.nil?) ?          
             accounts_balance += liability.balance :
-            accounts_balance += liability.balance( start_date, end_date 
+            accounts_balance += liability.balance( start_date, end_date )
         else
           (start_date.nil? && end_date.nil?) ?          
             accounts_balance -= liability.balance :
